@@ -1,0 +1,121 @@
+.container {
+    text-align: center;
+    max-width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    margin-top: 2rem;
+    color: white;
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title span {
+    color: #26ff;
+    padding-left: 1rem;
+}
+
+.reset {
+    width: 15rem;
+    height: 3rem;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 25px;
+    background: #1f3540;
+    font-size: 1.5rem;
+    color: #26ff;
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+    transition: all 0.3s ease;
+}
+
+.reset:hover {
+    background: #26ff;
+    color: #1f3540;
+}
+
+.board {
+    max-width: 90vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: auto;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20vw;
+    width: 20vw;
+    max-height: 60px;
+    max-width: 60px;
+    background: #1f3540;
+    border: 4px solid #0f1b21;
+    border-radius: 12px;
+    cursor: pointer;
+    margin: 2px;
+    transition: all 0.3s ease;
+}
+
+.square:hover {
+    transform: scale(1.1);
+}
+
+.info-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.info-wrapper h3 {
+    color: #26ff;
+}
+
+.info-wrapper li {
+    list-style-type: none;
+    margin: 0.5rem 0;
+}
+
+.info-wrapper button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #26ff;
+    transition: all 0.3s ease;
+}
+
+.info-wrapper button:hover {
+    color: #1f3540;
+}
+
+@media only screen and (max-width: 600px) {
+    .square {
+        height: 30vw;
+        width: 30vw;
+    }
+}
+
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+    .square {
+        height: 20vw;
+        width: 20vw;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .square {
+        height: 10vw;
+        width: 10vw;
+    }
+}
