@@ -6,22 +6,55 @@ import cross_icon from "../Assets/cross.png";
 const TicTacToe = () => {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [xIsNext, setXIsNext] = useState(true);
+  const [winningLine, setWinningLine] = useState([]);
   const [stepNumber, setStepNumber] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
   const winner = calculateWinner(history[stepNumber]);
 
   const handleClick = (i) => {
     const historyPoint = history.slice(0, stepNumber + 1);
     const current = historyPoint[stepNumber];
     const squares = [...current];
-    if (winner || squares[i]) return;
+
+    // Check if the game is already won or if the square is already filled
+    if (calculateWinner(squares) || squares[i]) return;
+
     squares[i] = xIsNext ? (
-      <img data-marker="x" src={cross_icon} alt="cross" />
+      <div className="marker" data-marker="x">
+        <img src={cross_icon} alt="cross" />
+      </div>
     ) : (
-      <img data-marker="o" src={circle_icon} alt="circle" />
+      <div className="marker" data-marker="o">
+        <img
+          className="marker"
+          src={circle_icon}
+          alt="circle"
+        />
+      </div>
     );
+
+    // squares[i] = xIsNext ? (
+    //     <img data-marker="x" src={cross_icon} alt="cross" />
+    // ) : (
+    //     <img
+    //       data-marker="o"
+    //       className="marker"
+    //       src={circle_icon}
+    //       alt="circle"
+    //     />
+    // );
+
     setHistory([...historyPoint, squares]);
     setStepNumber(historyPoint.length);
     setXIsNext(!xIsNext);
+
+    // Update the winning line state
+    const result = calculateWinner(squares);
+    if (result && result.length === 2) {
+      setWinningLine(result[1]);
+    } else {
+      setWinningLine([]);
+    }
   };
 
   const jumpTo = (step) => {
@@ -41,25 +74,32 @@ const TicTacToe = () => {
 
   return (
     <div className="container">
+      {/* Add a button to toggle the dropdown */}
+      <button
+        className="dropdown-toggle"
+        onClick={() => setShowDropdown(!showDropdown)}
+      >
+        History
+      </button>
+      {showDropdown && <ul className="dropdown-menu">{renderMoves()}</ul>}
       <h1 className="title">
-        Tic Tac Toe By<span>Felix</span>
+        <span>nineTicks</span>
       </h1>
       <div className="board">
         {history[stepNumber].map((_, i) => (
-          <button className="square" onClick={() => handleClick(i)}>
+          <button
+            className={`square ${
+              winningLine.includes(i) ? "winning-line" : ""
+            }`}
+            onClick={() => handleClick(i)}
+          >
             {history[stepNumber][i]}
           </button>
         ))}
       </div>
       <div className="info-wrapper">
-        <div>
-          <h3>History</h3>
-          {renderMoves()}
-        </div>
         <h3>
-          {winner
-            ? "Winner: " + winner
-            : "Next Player: " + (xIsNext ? "X" : "O")}
+          {winner ? "Winner: " + winner[0] : (xIsNext ? "X" : "O") + "'s turn"}
         </h3>
       </div>
     </div>
@@ -77,17 +117,19 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a] && 
-        squares[b] && // add this
-        squares[c] && // and this
-        squares[a].dataset.marker === squares[b].dataset.marker &&
-        squares[a].dataset.marker === squares[c].dataset.marker) {
-  
-      return squares[a];
+    if (squares[a] && squares[b] && squares[c]) {
+      if (
+        squares[a].props["data-marker"] === squares[b].props["data-marker"] &&
+        squares[a].props["data-marker"] === squares[c].props["data-marker"]
+      ) {
+        return [squares[a].props["data-marker"], lines[i]];
+      }
     }
   }
+
   return null;
 }
 
