@@ -33,17 +33,6 @@ const TicTacToe = () => {
       </div>
     );
 
-    // squares[i] = xIsNext ? (
-    //     <img data-marker="x" src={cross_icon} alt="cross" />
-    // ) : (
-    //     <img
-    //       data-marker="o"
-    //       className="marker"
-    //       src={circle_icon}
-    //       alt="circle"
-    //     />
-    // );
-
     setHistory([...historyPoint, squares]);
     setStepNumber(historyPoint.length);
     setXIsNext(!xIsNext);
