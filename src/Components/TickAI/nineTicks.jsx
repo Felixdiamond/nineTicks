@@ -115,51 +115,56 @@ function calculateWinner(squares) {
   return null;
 }
 
-function minimax(board, isMaximizing, depth, alpha, beta, difficulty) {
-  const result = calculateWinner(board);
-  if (result) {
-    return result.player === "X" ? 10 - depth : depth - 10;
+function minimax(board, depth, isMaximizing, alpha, beta) {
+  // Check for terminal states (win, loss, or tie)
+  const winner = calculateWinner(board);
+  if (winner) {
+    return { score: winner.player === 'O' ? 10 - depth : -10 + depth };
+  }
+  if (board.every(square => square !== null)) {
+    return { score: 0 };
   }
 
-  if (!board.includes(null)) {
-    return 0;
-  }
-
-  let bestScore = isMaximizing ? -Infinity : Infinity;
-  let bestMove = -1;
-
+  // Collect all possible moves
+  const moves = [];
   for (let i = 0; i < board.length; i++) {
     if (board[i] === null) {
-      board[i] = isMaximizing ? "X" : "O";
+      const newBoard = [...board];
+      newBoard[i] = isMaximizing ? 'O' : 'X';
+      const result = minimax(newBoard, depth + 1, !isMaximizing, alpha, beta);
+      moves.push({ index: i, score: result.score });
 
-      const score = minimax(
-        board,
-        !isMaximizing,
-        depth + 1,
-        alpha,
-        beta,
-        difficulty
-      );
-
-      board[i] = null;
-
+      // Alpha-Beta Pruning
       if (isMaximizing) {
-        if (score > alpha) alpha = score;
-        if (score > bestScore) {
-          bestScore = score;
-          bestMove = i;
-        }
+        alpha = Math.max(alpha, result.score);
+        if (beta <= alpha) break;
       } else {
-        if (score < beta) beta = score;
-        if (score < bestScore) {
-          bestScore = score;
-          bestMove = i;
-        }
+        beta = Math.min(beta, result.score);
+        if (beta <= alpha) break;
       }
-
-      if (alpha >= beta) break;
     }
   }
+
+  // Choose the best move
+  let bestMove;
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (const move of moves) {
+      if (move.score > bestScore) {
+        bestScore = move.score;
+        bestMove = move;
+      }
+    }
+  } else {
+    let bestScore = Infinity;
+    for (const move of moves) {
+      if (move.score < bestScore) {
+        bestScore = move.score;
+        bestMove = move;
+      }
+    }
+  }
+
   return bestMove;
 }
 
@@ -177,13 +182,13 @@ function makeAIMove(board, isMaximizing, difficulty) {
     ];
   } else if (difficulty === "medium") {
     // Check for winning moves
-    const winningMove = checkForWinningMove(board, isMaximizing ? "X" : "O");
+    const winningMove = checkForWinningMove(board, isMaximizing ? "O" : "X");
     if (winningMove !== -1) {
       return winningMove;
     }
 
     // Check if the player can win and block it
-    const blockingMove = checkForWinningMove(board, isMaximizing ? "O" : "X");
+    const blockingMove = checkForWinningMove(board, isMaximizing ? "X" : "O");
     if (blockingMove !== -1) {
       return blockingMove;
     }
@@ -199,8 +204,8 @@ function makeAIMove(board, isMaximizing, difficulty) {
       Math.floor(Math.random() * availableSquares.length)
     ];
   } else if (difficulty === "hard") {
-    // Implement the Minimax algorithm
-    return minimax(board, isMaximizing, 0, -Infinity, Infinity, difficulty);
+    const bestMove = minimax(board, 0, isMaximizing, -Infinity, Infinity);
+    return bestMove.index;
   }
 }
 
